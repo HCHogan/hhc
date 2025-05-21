@@ -12,7 +12,7 @@ import Data.Monoid
 import Data.Text.Lazy qualified as L
 import Data.Text.Lazy.IO qualified as L
 import HHC.Eval
-import HHC.Parser.Parser
+import HHC.Parsing.Parser
 import HHC.Syntax
 import HHC.TypeCheck.Env qualified as Env
 import HHC.TypeCheck.Infer

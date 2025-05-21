@@ -149,6 +149,7 @@ infer = \case
     return tv
   Let x e1 e2 -> do
     env <- ask @TypeEnv
+    -- TODO: use censor to remove the solved constraints
     (t0, cs) <- listen @[Constraint] $ infer e1
     subst <- solve (nullSubst, cs)
     let t1 = apply subst t0
@@ -159,12 +160,12 @@ infer = \case
     tv <- fresh
     uni (TArr tv tv) t1
     return tv
-  Op op e1 e2 -> do
+  Op o e1 e2 -> do
     t1 <- infer e1
     t2 <- infer e2
     tv <- fresh
     let u1 = TArr t1 $ TArr t2 tv
-    let u2 = ops M.! op
+    let u2 = ops M.! o
     uni u1 u2
     return tv
   If cond tr fl -> do

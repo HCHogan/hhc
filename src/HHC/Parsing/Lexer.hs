@@ -1,4 +1,4 @@
-module HHC.Parser.Lexer
+module HHC.Parsing.Lexer
   ( reserved,
     reservedOp,
     identifier,

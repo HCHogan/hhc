@@ -22,8 +22,8 @@ library
       HHC.Syntax
       HHC.Types
 
-      HHC.Parser.Parser
-      HHC.Parser.Lexer
+      HHC.Parsing.Parser
+      HHC.Parsing.Lexer
 
       HHC.Rename
 

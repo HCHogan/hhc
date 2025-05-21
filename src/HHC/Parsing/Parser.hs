@@ -1,4 +1,4 @@
-module HHC.Parser.Parser
+module HHC.Parsing.Parser
   ( parseExpr,
     parseModule,
   )
@@ -6,7 +6,7 @@ where
 
 import Data.Functor
 import Data.Text.Lazy qualified as L
-import HHC.Parser.Lexer
+import HHC.Parsing.Lexer
 import HHC.Syntax
 import Text.Parsec
 import Text.Parsec.Expr qualified as Ex
