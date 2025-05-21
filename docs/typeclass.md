@@ -102,4 +102,4 @@ def propagate_class_tycon(cls, typ):
 
 ## Dictionary conversion
 
-
+Dictionary conversion affects the generated code in two ways. First, overloaded definitions receive additional parameter variables to bind dictionaries. Second, a reference to an overloaded definition must be passed dictionaries.
