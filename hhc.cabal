@@ -31,6 +31,7 @@ library
       HHC.TypeCheck.Error
       HHC.TypeCheck.Subst
       HHC.TypeCheck.Infer
+      HHC.TypeCheck.Elaboration
 
       HHC.Core.Syntax
       HHC.Core.Optimizer

@@ -4,22 +4,22 @@
 
 ## Features
 
-* Hindley-Milner type inference (Algorithm W)
-* Interactive REPL interface
-* Basic lambda calculus support and let-bindings
+- Hindley-Milner type inference (Algorithm W)
+- Interactive REPL interface
+- Basic lambda calculus support and let-bindings
 
 ## Work in Progress
 
-* User-defined algebraic data types
-* Type constructors
-* Type classes
+- User-defined algebraic data types
+- Type constructors
+- Type classes
 
 ## Installation
 
 ### Prerequisites
 
-* [GHC (Glasgow Haskell Compiler)](https://www.haskell.org/ghc/)
-* [Cabal](https://www.haskell.org/cabal/)
+- [GHC (Glasgow Haskell Compiler)](https://www.haskell.org/ghc/)
+- [Cabal](https://www.haskell.org/cabal/)
 
 ### Build & Run
 
@@ -59,12 +59,16 @@ HM> t2
 
 Future enhancements include:
 
-* Full support for user-defined algebraic data types
-* Advanced type constructors and kind checking
-* Typeclass definitions and instance resolution
-* Module system
+- Full support for user-defined algebraic data types
+- Advanced type constructors and kind checking
+- Typeclass definitions and instance resolution
+- Module system
+
+## Notes
+
+I wrote several notes while implementing the compiler:
+[implementing typeclasses](./docs/typeclass.md)
 
 ## License
 
 This project is distributed under the MIT License. See [LICENSE](LICENSE) for details.
-
