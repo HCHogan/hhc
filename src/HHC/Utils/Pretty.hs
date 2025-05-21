@@ -1,12 +1,12 @@
 module HHC.Utils.Pretty where
-import HHC.Syntax
-import HHC.Types
-import HHC.TypeCheck.Error
-import HHC.TypeCheck.Env
-import Prelude hiding ((<>))
 
 import Data.Map qualified as M
+import HHC.Syntax
+import HHC.TypeCheck.Env
+import HHC.TypeCheck.Error
+import HHC.Types
 import Text.PrettyPrint
+import Prelude hiding ((<>))
 
 parensIf :: Bool -> Doc -> Doc
 parensIf True = parens
@@ -23,9 +23,9 @@ instance Pretty TVar where
 
 instance Pretty Type where
   ppr p (TArr a b) = parensIf (isArrow a) (ppr p a) <+> text "->" <+> ppr p b
-   where
-    isArrow TArr{} = True
-    isArrow _ = False
+    where
+      isArrow TArr {} = True
+      isArrow _ = False
   ppr p (TVar a) = ppr p a
   ppr _ (TCon a) = text a
 
@@ -68,11 +68,11 @@ instance Show TypeError where
   show (UnboundVariable a) = "Not in scope: " ++ a
   show (UnificationMismatch a b) =
     concat
-      [ "Cannot unify types: \n\t"
-      , show a
-      , "\nwith \n\t"
-      , show b
-      , "\nThe types have different lengths."
+      [ "Cannot unify types: \n\t",
+        show a,
+        "\nwith \n\t",
+        show b,
+        "\nThe types have different lengths."
       ]
 
 ppscheme :: Scheme -> String

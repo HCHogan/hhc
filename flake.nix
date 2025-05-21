@@ -40,7 +40,7 @@
             haskellPackages.alex
             haskellPackages.happy
             haskellPackages.cabal-fmt
-            haskellPackages.fourmolu
+            haskellPackages.ormolu
             cabal-install
             hlint
           ];

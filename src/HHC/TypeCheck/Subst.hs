@@ -1,14 +1,15 @@
-module HHC.TypeCheck.Subst (
-  Subst,
-  nullSubst,
-  compose,
-  Substitutable (..),
-) where
+module HHC.TypeCheck.Subst
+  ( Subst,
+    nullSubst,
+    compose,
+    Substitutable (..),
+  )
+where
 
-import HHC.Types
-import HHC.TypeCheck.Env
 import Data.Map qualified as M
 import Data.Set qualified as S
+import HHC.TypeCheck.Env
+import HHC.Types
 
 type Subst = M.Map TVar Type
 
@@ -33,8 +34,8 @@ instance Substitutable Type where
 
 instance Substitutable Scheme where
   apply s (Forall as t) = Forall as $ apply s' t
-   where
-    s' = foldr M.delete s as
+    where
+      s' = foldr M.delete s as
   ftv (Forall as t) = ftv t `S.difference` S.fromList as
 
 instance (Substitutable a) => Substitutable [a] where
@@ -48,4 +49,3 @@ instance Substitutable TypeEnv where
 instance (Substitutable a, Substitutable b) => Substitutable (a, b) where
   apply s (a, b) = (apply s a, apply s b)
   ftv (a, b) = ftv a `S.union` ftv b
-

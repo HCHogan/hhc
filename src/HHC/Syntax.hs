@@ -1,11 +1,12 @@
-module HHC.Syntax(
-  Expr(..),
-  Lit(..),
-  Binop(..),
-  Decl,
-  Program(..),
-  Var,
-) where
+module HHC.Syntax
+  ( Expr (..),
+    Lit (..),
+    Binop (..),
+    Decl,
+    Program (..),
+    Var,
+  )
+where
 
 type Var = String
 
@@ -31,4 +32,3 @@ data Binop = Add | Sub | Mul | Eql
 type Decl = (String, Expr)
 
 data Program = Program [Decl] Expr deriving (Eq)
-

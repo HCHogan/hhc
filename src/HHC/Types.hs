@@ -1,10 +1,11 @@
-module HHC.Types (
-  TVar (..),
-  Type (..),
-  Scheme (..),
-  typeInt,
-  typeBool,
-) where
+module HHC.Types
+  ( TVar (..),
+    Type (..),
+    Scheme (..),
+    typeInt,
+    typeBool,
+  )
+where
 
 newtype TVar = TV String
   deriving (Show, Eq, Ord)
@@ -25,4 +26,3 @@ typeInt = TCon "Int"
 
 typeBool :: Type
 typeBool = TCon "Bool"
-

@@ -1,17 +1,16 @@
-module HHC.Parser.Parser (
-  parseExpr,
-  parseModule,
-) where
-
-import Text.Parsec
-import Text.Parsec.Expr qualified as Ex
-import Text.Parsec.Text.Lazy (Parser)
+module HHC.Parser.Parser
+  ( parseExpr,
+    parseModule,
+  )
+where
 
 import Data.Functor
 import Data.Text.Lazy qualified as L
-
 import HHC.Parser.Lexer
 import HHC.Syntax
+import Text.Parsec
+import Text.Parsec.Expr qualified as Ex
+import Text.Parsec.Text.Lazy (Parser)
 
 {-
   source
@@ -94,12 +93,11 @@ infixOp op f = Ex.Infix (reservedOp op $> f)
 
 opTable :: Operators Expr
 opTable =
-  [ [infixOp OpTimes (Op Mul) Ex.AssocLeft]
-  ,
-    [ infixOp OpPlus (Op Add) Ex.AssocLeft
-    , infixOp OpMinus (Op Sub) Ex.AssocLeft
-    ]
-  , [infixOp OpEqEq (Op Eql) Ex.AssocLeft]
+  [ [infixOp OpTimes (Op Mul) Ex.AssocLeft],
+    [ infixOp OpPlus (Op Add) Ex.AssocLeft,
+      infixOp OpMinus (Op Sub) Ex.AssocLeft
+    ],
+    [infixOp OpEqEq (Op Eql) Ex.AssocLeft]
   ]
 
 expr :: Parser Expr
@@ -143,4 +141,3 @@ parseExpr = parse (contents expr) "<stdin>"
 
 parseModule :: FilePath -> L.Text -> Either ParseError [Binding]
 parseModule = parse (contents modl)
-

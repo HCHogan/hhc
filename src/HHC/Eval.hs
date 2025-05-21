@@ -1,12 +1,12 @@
-module HHC.Eval (
-  runEval,
-  TermEnv,
-  emptyTmenv,
-) where
+module HHC.Eval
+  ( runEval,
+    TermEnv,
+    emptyTmenv,
+  )
+where
 
 import Data.Functor.Identity
 import Data.Map qualified as Map
-
 import HHC.Syntax
 
 data Value
@@ -24,7 +24,7 @@ emptyTmenv = Map.empty
 instance Show Value where
   show (VInt n) = show n
   show (VBool n) = show n
-  show VClosure{} = "<<closure>>"
+  show VClosure {} = "<<closure>>"
 
 instance MonadFail Identity where
   fail = error "eval error"
@@ -69,4 +69,3 @@ runEval :: TermEnv -> String -> Expr -> (Value, TermEnv)
 runEval env nm ex =
   let res = runIdentity (eval env ex)
    in (res, Map.insert nm res env)
-

@@ -1,27 +1,28 @@
-module HHC.Parser.Lexer (
-  reserved,
-  reservedOp,
-  identifier,
-  integer,
-  parens,
-  semiSep,
-  semi,
-  contents,
-  ReservedWord (..),
-  ReservedOp (..),
-  Op,
-  Operators,
-) where
+module HHC.Parser.Lexer
+  ( reserved,
+    reservedOp,
+    identifier,
+    integer,
+    parens,
+    semiSep,
+    semi,
+    contents,
+    ReservedWord (..),
+    ReservedOp (..),
+    Op,
+    Operators,
+  )
+where
 
+import Data.Functor.Identity
 import Data.Text.Lazy qualified as L
 import Text.Parsec
 import Text.Parsec.Expr qualified as Ex
 import Text.Parsec.Text.Lazy
 import Text.Parsec.Token qualified as Tok
 
-import Data.Functor.Identity
-
 type Op a = Ex.Operator L.Text () Identity a
+
 type Operators a = Ex.OperatorTable L.Text () Identity a
 
 data ReservedWord
@@ -78,17 +79,17 @@ lexer :: Tok.GenTokenParser L.Text () Identity
 lexer =
   Tok.makeTokenParser $
     Tok.LanguageDef
-      { Tok.commentStart = "{-"
-      , Tok.commentEnd = "-}"
-      , Tok.commentLine = "--"
-      , Tok.nestedComments = True
-      , Tok.identStart = letter
-      , Tok.identLetter = alphaNum <|> oneOf "_'"
-      , Tok.opStart = oneOf ":!#$%&*+./<=>?@\\^|-~"
-      , Tok.opLetter = oneOf ":!#$%&*+./<=>?@\\^|-~"
-      , Tok.reservedNames = reservedWords
-      , Tok.reservedOpNames = reservedOps
-      , Tok.caseSensitive = True
+      { Tok.commentStart = "{-",
+        Tok.commentEnd = "-}",
+        Tok.commentLine = "--",
+        Tok.nestedComments = True,
+        Tok.identStart = letter,
+        Tok.identLetter = alphaNum <|> oneOf "_'",
+        Tok.opStart = oneOf ":!#$%&*+./<=>?@\\^|-~",
+        Tok.opLetter = oneOf ":!#$%&*+./<=>?@\\^|-~",
+        Tok.reservedNames = reservedWords,
+        Tok.reservedOpNames = reservedOps,
+        Tok.caseSensitive = True
       }
 
 reserved :: ReservedWord -> Parser ()
@@ -118,4 +119,3 @@ contents p = do
   r <- p
   eof -- we don't need Tok.whiteSpace here because the parser already consumes trailing whitespace
   return r
-

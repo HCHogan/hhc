@@ -1,25 +1,22 @@
-module HHC.Repl(
-  repl
-) where
-
-import HHC.Eval
-import HHC.TypeCheck.Env qualified as Env
-import HHC.TypeCheck.Infer
-import HHC.Parser.Parser
-import HHC.Utils.Pretty
-import HHC.Syntax
-
-import Data.Map qualified as Map
-import Data.Monoid
-import Data.Text.Lazy qualified as L
-import Data.Text.Lazy.IO qualified as L
+module HHC.Repl
+  ( repl,
+  )
+where
 
 import Control.Monad
 import Control.Monad.Identity
 import Control.Monad.State.Strict
-
 import Data.List (foldl', isPrefixOf)
-
+import Data.Map qualified as Map
+import Data.Monoid
+import Data.Text.Lazy qualified as L
+import Data.Text.Lazy.IO qualified as L
+import HHC.Eval
+import HHC.Parser.Parser
+import HHC.Syntax
+import HHC.TypeCheck.Env qualified as Env
+import HHC.TypeCheck.Infer
+import HHC.Utils.Pretty
 import System.Console.Repline hiding (options)
 import System.Environment
 import System.Exit
@@ -29,14 +26,15 @@ import System.Exit
 -------------------------------------------------------------------------------
 
 data IState = IState
-  { tyctx :: Env.TypeEnv -- Type environment
-  , tmctx :: TermEnv -- Value environment
+  { tyctx :: Env.TypeEnv, -- Type environment
+    tmctx :: TermEnv -- Value environment
   }
 
 initState :: IState
 initState = IState Env.emptyTypeEnv emptyTmenv
 
 type Repl = HaskelineT (StateT IState IO)
+
 hoistErr :: (Show e) => Either e a -> Repl a
 hoistErr (Right val) = return val
 hoistErr (Left err) = do
@@ -49,8 +47,8 @@ hoistErr (Left err) = do
 
 evalDef :: TermEnv -> (String, Expr) -> TermEnv
 evalDef env (nm, ex) = tmctx'
- where
-  (val, tmctx') = runEval env nm ex
+  where
+    (val, tmctx') = runEval env nm ex
 
 exec :: Bool -> L.Text -> Repl ()
 exec update source = do
@@ -66,8 +64,8 @@ exec update source = do
   -- Create the new environment
   let st' =
         st
-          { tmctx = foldl' evalDef (tmctx st) mod
-          , tyctx = tyctx' <> (tyctx st)
+          { tmctx = foldl' evalDef (tmctx st) mod,
+            tyctx = tyctx' <> (tyctx st)
           }
 
   -- Update the interpreter state
@@ -139,18 +137,18 @@ comp n = do
 
 options' :: [(String, [String] -> Repl ())]
 options' =
-  [ ("load", load)
-  , ("browse", browse)
-  , ("quit", quit)
-  , ("type", typeof)
+  [ ("load", load),
+    ("browse", browse),
+    ("quit", quit),
+    ("type", typeof)
   ]
 
 options :: Options Repl
 options =
-  [ ("load", \arg -> load (words arg))
-  , ("browse", \_ -> browse [])
-  , ("quit", \_ -> quit ())
-  , ("type", \arg -> typeof (words arg))
+  [ ("load", \arg -> load (words arg)),
+    ("browse", \_ -> browse []),
+    ("quit", \_ -> quit ()),
+    ("type", \arg -> typeof (words arg))
   ]
 
 -------------------------------------------------------------------------------
@@ -172,11 +170,11 @@ shell pre =
       completer -- 6. tab completer
       pre -- 7. initialiser (Repl ())
       finaliser -- 8. finaliser
- where
-  finaliser :: Repl ExitDecision
-  finaliser = do
-    liftIO $ putStrLn "Goodbye!"
-    return Exit
+  where
+    finaliser :: Repl ExitDecision
+    finaliser = do
+      liftIO $ putStrLn "Goodbye!"
+      return Exit
 
 -------------------------------------------------------------------------------
 -- Toplevel
@@ -190,4 +188,3 @@ repl = do
     [fname] -> shell (load [fname])
     ["test", fname] -> shell (load [fname] >> browse [] >> quit ())
     _ -> putStrLn "invalid arguments"
-

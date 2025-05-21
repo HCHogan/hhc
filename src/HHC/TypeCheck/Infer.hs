@@ -1,9 +1,10 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-module HHC.TypeCheck.Infer(
-  inferTop,
-  inferExpr,
-) where
+module HHC.TypeCheck.Infer
+  ( inferTop,
+    inferExpr,
+  )
+where
 
 import Control.Lens
 import Control.Monad
@@ -16,10 +17,10 @@ import Effectful.Error.Static
 import Effectful.Reader.Static
 import Effectful.State.Static.Local
 import Effectful.Writer.Static.Local
-import HHC.TypeCheck.Subst
+import HHC.Syntax
 import HHC.TypeCheck.Env
 import HHC.TypeCheck.Error
-import HHC.Syntax
+import HHC.TypeCheck.Subst
 import HHC.Types
 
 -- We will use contraint generation approach.
@@ -206,4 +207,3 @@ solve (su, cs) = case cs of
 
 runSolve :: [Constraint] -> Either TypeError Subst
 runSolve cs = runPureEff $ runErrorNoCallStack $ solve (nullSubst, cs)
-

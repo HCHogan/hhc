@@ -1,6 +1,7 @@
-module HHC.TypeCheck.Error(
-  TypeError(..),
-) where
+module HHC.TypeCheck.Error
+  ( TypeError (..),
+  )
+where
 
 import HHC.Types
 

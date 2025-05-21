@@ -1,23 +1,22 @@
-module HHC.TypeCheck.Env (
-  TypeEnv(..),
-  extend,
-  remove,
-  emptyTypeEnv,
-  lookup,
-  merge,
-  mergeEnvs,
-  singleton,
-  keys,
-  fromList,
-  toList,
-) where
-
-import Prelude hiding (lookup)
-
-import HHC.Syntax
-import HHC.Types
+module HHC.TypeCheck.Env
+  ( TypeEnv (..),
+    extend,
+    remove,
+    emptyTypeEnv,
+    lookup,
+    merge,
+    mergeEnvs,
+    singleton,
+    keys,
+    fromList,
+    toList,
+  )
+where
 
 import Data.Map qualified as M
+import HHC.Syntax
+import HHC.Types
+import Prelude hiding (lookup)
 
 newtype TypeEnv = TypeEnv (M.Map Var Scheme)
   deriving (Semigroup, Monoid)
@@ -51,4 +50,3 @@ fromList xs = TypeEnv (M.fromList xs)
 
 toList :: TypeEnv -> [(Var, Scheme)]
 toList (TypeEnv env) = M.toList env
-
