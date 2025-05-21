@@ -1,5 +1,6 @@
 module Main where
 
+import HHC.Repl
+
 main :: IO ()
-main = do
-  putStrLn "Hello, Haskell!"
+main = repl

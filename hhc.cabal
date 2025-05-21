@@ -30,13 +30,17 @@ library
       HHC.TypeCheck.Env
       HHC.TypeCheck.Error
       HHC.TypeCheck.Subst
+      HHC.TypeCheck.Infer
 
       HHC.Core.Syntax
       HHC.Core.Optimizer
 
       HHC.Eval
 
+      HHC.Repl
+
       HHC.Utils.Outputable
+      HHC.Utils.Pretty
 
     -- other-modules:
     -- other-extensions:
@@ -47,6 +51,9 @@ library
       , repline
       , parsec
       , text
+      , containers
+      , pretty
+      , mtl
 
     hs-source-dirs:   src
     default-language: GHC2024
