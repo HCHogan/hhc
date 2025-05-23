@@ -377,3 +377,24 @@ In this case, `g` would take two dictionaries: `d_Text_L` (for `Text [L]`) and `
 The tree diagram provided seems to use a convention where `(d-Text-List d_param)` constructs the necessary combined dictionary information for `print-tuple2`, or `print-tuple2` is less generic than assumed above. The structure `P (A B)` suggests `A` is a function applied to `B`, and `P` is applied to the result of that.
 
 The `length x` part is simplified in this final tree, showing `length` applied to `x`. It's assumed that `length :: [a] -> Int` is either non-overloaded here or its dictionary passing is handled separately/implicitly.
+
+## Extensions
+This implementation of typeclass can be extended in a number of ways to both improve the generated code and increase the expressiveness of the type system.
+
+### Class Hierarchy
+When class sets for type variables are constructed, contexts implied by the superclass relation can be removed.
+
+### Default Method Declaration
+This requires only that default definition bound to a variable during dictionary construction and placed into any dictionary in which the method is unspecified by the instance declaration.
+
+### Typing Recursive Definitions
+Mutually recursive definitions can be understood as tupling of functions.
+
+### Reducing Constant Dictionaries
+Local functions which are inferred to have a overloaded type may only be used at only one overloading.
+
+### Overloading Methods
+
+### User Supplied Signatures
+
+### Monomorphism Restriction
