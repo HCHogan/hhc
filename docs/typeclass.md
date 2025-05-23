@@ -102,4 +102,47 @@ def propagate_class_tycon(cls, typ):
 
 ## Dictionary conversion
 
-Dictionary conversion affects the generated code in two ways. First, overloaded definitions receive additional parameter variables to bind dictionaries. Second, a reference to an overloaded definition must be passed dictionaries.
+Dictionary conversion affects the generated code in two ways. First, overloaded definitions receive additional parameter variables to bind dictionaries. Second, a reference to an overloaded definition must be passed dictionaries. Each element of the context correspond to a dictionary passed into or received by an overloaded function. The ordering is arbitary as long as the same ordering is used consistently.
+
+During the hindley milner type inference, types only stablize at generalization, so the appropriate dictionaries needed to resolve the overloading cannot be determined until the entire expression being generalized has already been walked over. To avoid a second pass over the code generalization, we will hold onto the necessary bits of unresolvable code using **placeholders**. A placeholder captures a type and an object to be resolved based on that type. During generalization, placeholders are replaced by the required type-dependent code.
+
+### Inserting placeholders
+
+There are two kind to place holders, class place holder `<C, t>` and method placeholder `<f, t>`
+This happens during the **typecheck portion** of the typechcker. placeholders are inserted when the type checker encounters:
+
+- overloaded variable: rewritten as an application to placeholders. e.g. `(Num a, Text b) => a -> b` -> `(Num t1, Text t2) => t1 -> t2` -> `f <Num, t1> <Num, t2>`
+- method functions: directly converted into placeholders. e.g. `(==)` method in the Eq class would yield `<(==), t1>`
+- `letrec bound`: recursively defined variables cannot be converted until their type in known. References to such variables are simply replaced by a placeholder until the correct context has been determined.
+
+### Inserting dictionary parameters
+
+This occurs during the **generalization portion** of type inference. generalization gathers all uninstantiated type variables in the type of a definition and creates a new dictionary variable for every element of every context in these type variables:
+
+- A lambda which binds the dictionaries is wrapped around the body of the definition.
+- A parameter environment is created.
+
+e.g. the inferred type of f is `(Num t1, Text t2) => t1 -> t2`, the definition of f is changed to `f = \d1 d2 -> f'` where f' is the original definition of f. This creates the following parameter environment: `[((Num, t1), d1), ((Text, t2), d2)]`
+
+### Resolving placeholders
+
+At generalization, place holders can be resolved. For placeholders associated with either methods or classes, the type associated with the placeholder determines how it will be resolved:
+
+**the type is a type variable in the parameter environment**:
+
+- A class placeholder is resolved to the dictionary parameter variable
+- A method placeholder requires a selector function to be applied to the dictionary variable.
+
+**the type has been instantiated to a type constructor**:
+
+- A method placeholder: an instance declaration supplies the method itself.
+- A class placeholder: an instance declaration supplies the dictionary variable. e.g. dEqInt`.
+  Since dictionaries or methods themselves may be overloaded, the typechecker may need to recursively generate placeholders to resolve this addtional overloading.
+
+**The type variable was bound in an outer type environment**:
+
+- the processing of the placeholder must be derred to the outer declaration.
+
+**None of the above conditions hold**:
+
+- An ambiguity has been detected. The ambiguity may be resolved by some language specific mechanism or simply signal a type erorr.
