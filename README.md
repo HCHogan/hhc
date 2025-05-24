@@ -1,6 +1,6 @@
 # hhc
 
-**hhc** is a minimal, experimental functional programming language implemented in Haskell, featuring Hindley-Milner type inference (Algorithm W).
+My Playground
 
 ## Features
 
