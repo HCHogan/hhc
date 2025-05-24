@@ -1,6 +1,7 @@
 module Main (main) where
 
 import Data.Map qualified as Map
+import HHC.Core.Optimizer
 import HHC.Core.Syntax
 import HHC.Core.Tc
 import Test.Tasty
@@ -12,17 +13,36 @@ main = defaultMain tests
 tests :: TestTree
 tests =
   testGroup
-    "HHC.Core.Tc"
-    [ testCase "literal type Bool" $
-        execTc exampleEnv (typeCheck (Lit (LBool True)))
-          @?= Right (TCon (TyCon "Bool")),
-      testCase "simple lambda" $
-        let expr = Lam (TermVar "x") (TCon (TyCon "Int")) (Var (TermVar "x"))
-         in execTc exampleEnv (typeCheck expr)
-              @?= Right (TArr (TCon (TyCon "Int")) (TCon (TyCon "Int"))),
-      testCase "testExpr → Either Bool Int" $
-        execTc exampleEnv (typeCheck testExpr)
-          @?= Right expectedType
+    "HHC"
+    [ testGroup
+        "HHC.Core.Tc"
+        [ testCase "literal type Bool" $
+            execTc exampleEnv (typeCheck (Lit (LBool True)))
+              @?= Right (TCon (TyCon "Bool")),
+          testCase "simple lambda" $
+            let expr = Lam (TermVar "x") (TCon (TyCon "Int")) (Var (TermVar "x"))
+             in execTc exampleEnv (typeCheck expr)
+                  @?= Right (TArr (TCon (TyCon "Int")) (TCon (TyCon "Int"))),
+          testCase "testExpr → Either Bool Int" $
+            execTc exampleEnv (typeCheck testExpr)
+              @?= Right expectedType
+        ],
+      testGroup
+        "HHC.Core.Optimizer"
+        [ testCase "constant folding: 1 + 2 → 3" $
+            let expr = App (App (Var (TermVar "+")) (Lit (LInt 1))) (Lit (LInt 2))
+             in optimizeExpr expr @?= Lit (LInt 3),
+          testCase "beta-reduce nested let" $
+            let expr2 =
+                  Let
+                    (TermVar "x")
+                    (Lit (LInt 5))
+                    ( App
+                        (Lam (TermVar "y") (TCon (TyCon "Int")) (Var (TermVar "y")))
+                        (Var (TermVar "x"))
+                    )
+             in optimizeExpr expr2 @?= Lit (LInt 5)
+        ]
     ]
 
 exampleEnv :: Env
@@ -91,11 +111,17 @@ testExpr =
       )
       (Con (DataCon "Just") [TCon (TyCon "Int")] [Lit (LInt 5)])
 
--- >>> execTc exampleEnv (typeCheck testExpr)
--- Right (TApp (TApp (TCon (TyCon "Either")) (TCon (TyCon "Bool"))) (TCon (TyCon "Int")))
-
 expectedType :: Type
 expectedType =
   TApp
     (TApp (TCon (TyCon "Either")) (TCon (TyCon "Bool")))
     (TCon (TyCon "Int"))
+
+-- >>> let expr = App (App (Var (TermVar "+")) (Lit (LInt 1))) (Lit (LInt 2))
+-- >>> optimizeExpr expr
+-- Lit (LInt 3)
+
+-- >>> -- Beta-reduce nested lets
+-- >>> let expr2 = Let (TermVar "x") (Lit (LInt 5)) (App (Lam (TermVar "y") (TCon (TyCon "Int")) (Var (TermVar "y"))) (Var (TermVar "x")))
+-- >>> optimizeExpr expr2
+-- Lit (LInt 5)
