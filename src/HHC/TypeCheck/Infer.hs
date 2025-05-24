@@ -181,8 +181,8 @@ infer = \case
 
 type Unifier = (Subst, [Constraint])
 
-emptyUnifier :: Unifier
-emptyUnifier = (nullSubst, [])
+-- emptyUnifier :: Unifier
+-- emptyUnifier = (nullSubst, [])
 
 unifies :: (Error TypeError :> es) => Type -> Type -> Eff es Subst
 unifies t1 t2 | t1 == t2 = return nullSubst

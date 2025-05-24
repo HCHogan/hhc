@@ -28,7 +28,7 @@ instance Substitutable Type where
   apply s (TArr a b) = TArr (apply s a) (apply s b)
   apply s t@(TVar a) = M.findWithDefault t a s
 
-  ftv (TCon a) = S.empty
+  ftv (TCon _) = S.empty
   ftv (TVar a) = S.singleton a
   ftv (TArr t1 t2) = ftv t1 `S.union` ftv t2
 
