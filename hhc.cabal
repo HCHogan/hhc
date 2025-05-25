@@ -36,6 +36,8 @@ library
       HHC.Core.Syntax
       HHC.Core.Tc
       HHC.Core.Optimizer
+      HHC.Core.Test
+      HHC.Core.Pretty
 
       HHC.Eval
 
