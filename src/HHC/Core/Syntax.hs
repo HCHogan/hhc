@@ -1,15 +1,15 @@
 module HHC.Core.Syntax where
 
-newtype TermVar = TermVar String
+newtype TermVarP a = TermVar a
   deriving (Eq, Ord, Show)
 
-newtype TypeVar = TypeVar String
+newtype TypeVarP a = TypeVar a
   deriving (Eq, Ord, Show)
 
-newtype TyCon = TyCon String
+newtype TyConP a = TyCon a
   deriving (Eq, Ord, Show)
 
-newtype DataCon = DataCon String
+newtype DataConP a = DataCon a
   deriving (Eq, Ord, Show)
 
 -- Kinds: * and arrow
@@ -19,17 +19,17 @@ data Kind
   deriving (Eq, Ord, Show)
 
 -- System F types + ADT type constructors
-data Type
+data TypeP a
   = -- | a
-    TVar TypeVar
+    TVar (TypeVarP a)
   | -- | τ1 → τ2
-    TArr Type Type
+    TArr (TypeP a) (TypeP a)
   | -- | ∀(a :: κ). τ
-    TForall TypeVar Kind Type
+    TForall (TypeVarP a) Kind (TypeP a)
   | -- | Bool, Maybe, etc.
-    TCon TyCon
+    TCon (TyConP a)
   | -- | T τ
-    TApp Type Type
+    TApp (TypeP a) (TypeP a)
   deriving (Eq, Show)
 
 -- Literal, now including Bool
@@ -40,38 +40,47 @@ data Literal
   | LBool Bool
   deriving (Eq, Show)
 
--- Patterns for case-match
-data Pat
+-- PatPterns for case-match
+data PatP a
   = -- | x
-    PVar TermVar
+    PVar (TermVarP a)
   | -- | 42, True
     PLit Literal
   | -- | Just x, (:) h t
-    PCon DataCon [TermVar]
+    PCon (DataConP a) [TermVarP a]
   deriving (Eq, Show)
 
 -- Case alternatives
-data Alt = Alt Pat Expr
+data AltP a = Alt (PatP a) (ExprP a)
   deriving (Eq, Show)
 
 -- Core expressions
-data Expr
+data ExprP a
   = -- | x
-    Var TermVar
+    Var (TermVarP a)
   | -- | λ(x:τ). e
-    Lam TermVar Type Expr
+    Lam (TermVarP a) (TypeP a) (ExprP a)
   | -- | e1 e2
-    App Expr Expr
+    App (ExprP a) (ExprP a)
   | -- | Λ(a::κ). e
-    TyLam TypeVar Kind Expr
+    TyLam (TypeVarP a) Kind (ExprP a)
   | -- | e [τ]
-    TyApp Expr Type
+    TyApp (ExprP a) (TypeP a)
   | -- | let x = e1 in e2
-    Let TermVar Expr Expr
+    Let (TermVarP a) (ExprP a) (ExprP a)
   | -- | DataCon typeArgs termArgs
-    Con DataCon [Type] [Expr]
+    Con (DataConP a) [TypeP a] [ExprP a]
   | -- | case e of alts
-    Case Expr [Alt]
+    Case (ExprP a) [AltP a]
   | -- | literals
     Lit Literal
   deriving (Eq, Show)
+
+type TermVar = TermVarP String
+type TypeVar = TypeVarP String
+type TyCon = TyConP String
+type DataCon = DataConP String
+type Pat = PatP String
+type Expr = ExprP String
+type Alt = AltP String
+type Type = TypeP String

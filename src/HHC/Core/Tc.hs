@@ -159,10 +159,10 @@ typeCheckPat pat ty = case pat of
     return []
   PCon dc vars -> do
     (tvs, paramTs, resTy) <- lookupCon dc
-    -- 1) 绑定类型变量
+    -- 1) bind type variables
     subst0 <- unify resTy ty
     let instTs = map (applySubst subst0) paramTs
-    -- 2) 检查模式参数数量
+    -- 2) check datacon argument arity
     let expArgs = length instTs
         actArgs = length vars
     when (expArgs /= actArgs) $
@@ -196,10 +196,11 @@ typeCheck = \case
         (typeCheck e)
     return (TForall a k retTy)
   TyApp e tyArg -> do
-    -- checkKind tyArg
     tFun <- typeCheck e
     case tFun of
-      TForall a _ body -> return (applySubst (Map.singleton a tyArg) body)
+      TForall a k body -> do
+        checkKind k tyArg
+        return (applySubst (Map.singleton a tyArg) body)
       _ -> throwError (NotPolymorphic tFun)
   Let x e1 e2 -> do
     t1 <- typeCheck e1
