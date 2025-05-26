@@ -1,6 +1,8 @@
 module HHC.CodeGen.LLVM.Test (main) where
 
+import Control.Monad
 import Data.Int (Int32)
+import Data.Word (Word32, Word8)
 import LLVM.Core
 import LLVM.ExecutionEngine qualified as EE
 import LLVM.Util.Arithmetic (CallIntrinsic, arithFunction, (%<), (?))
@@ -47,17 +49,19 @@ main = do
   let someFn :: Double -> Double
       someFn = EE.unsafeRemoveIO ioSomeFn
 
-  writeCodeGenModule "Arith.bc" mSomeFn'
+  -- writeCodeGenModule "Arith.bc" mSomeFn'
 
   print (someFn 10)
   print (someFn 2)
 
-  writeCodeGenModule "ArithFib.bc" mFib
+  join $ EE.simpleFunction $ bldGreet $ "Using FFI put: " ++ show (someFn 10)
+
+  -- writeCodeGenModule "ArithFib.bc" mFib
 
   fib <- EE.simpleFunction mFib
   fib 22 >>= print
 
-  writeCodeGenModule "VArith.bc" mVFun
+  -- writeCodeGenModule "VArith.bc" mVFun
 
   ioVFun <- EE.simpleFunction mVFun
   let v = consVector 1 2 3 4
@@ -80,3 +84,15 @@ vectorPtrWrap f v =
     F.alloca $ \bPtr -> do
       f aPtr bPtr
       EE.peek bPtr
+
+bldGreet :: String -> CodeGenModule (Function (IO ()))
+bldGreet s =
+  withStringNul
+    s
+    ( \greetz -> do
+        puts <- newNamedFunction ExternalLinkage "puts" :: TFunction (Ptr Word8 -> IO Word32)
+        func <- createFunction ExternalLinkage $ do
+          _ <- call puts =<< getElementPtr0 greetz (0 :: Word32, ())
+          ret ()
+        return func
+    )
