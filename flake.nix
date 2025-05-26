@@ -19,50 +19,13 @@
         name = "hhc";
         src = ./.;
         llvm16 = pkgs.llvmPackages_16;
+        basePkg = pkgs.haskellPackages.callCabal2nix name src {};
+
+        pkg = basePkg.overrideAttrs (old: {
+          buildInputs = old.buildInputs ++ [pkgs.llvmPackages_16.libllvm pkgs.llvmPackages_16.bintools];
+        });
       in {
-        packages.default = pkgs.stdenv.mkDerivation {
-          pname = name;
-          version = "0.1.0";
-          src = ./.;
-
-          nativeBuildInputs = [
-            pkgs.haskell.compiler.ghc912
-            pkgs.cabal-install
-
-            llvm16.libllvm
-            llvm16.bintools
-            llvm16.libcxxClang
-          ];
-
-          unpackPhase = "true";
-
-          buildPhase = ''
-            mkdir -p /tmp/cabal
-            mkdir -p /tmp/dist-newstyle
-            export CABAL_DIR=/tmp/cabal
-            if [ ! -f "$CABAL_DIR/config" ]; then
-              cabal user-config init
-            fi
-            cabal update
-            cd $src
-            cabal -j build --enable-tests --builddir=/tmp/dist-newstyle
-          '';
-
-          checkPhase = ''
-            export CABAL_DIR=/tmp/cabal
-            cabal test --enable-tests --show-details=always
-          '';
-
-          installPhase = ''
-            export CABAL_DIR=/tmp/cabal
-            cd "$src"
-            cabal install \
-              --builddir=/tmp/dist-newstyle \
-              --install-method=copy \
-              --installdir="$out/bin" \
-              --overwrite-policy=always
-          '';
-        };
+        packages.default = pkg;
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             gnumake
