@@ -49,19 +49,19 @@ main = do
   let someFn :: Double -> Double
       someFn = EE.unsafeRemoveIO ioSomeFn
 
-  -- writeCodeGenModule "Arith.bc" mSomeFn'
+  writeCodeGenModule "Arith.bc" mSomeFn'
 
   print (someFn 10)
   print (someFn 2)
 
   join $ EE.simpleFunction $ bldGreet $ "Using FFI put: " ++ show (someFn 10)
 
-  -- writeCodeGenModule "ArithFib.bc" mFib
+  writeCodeGenModule "ArithFib.bc" mFib
 
   fib <- EE.simpleFunction mFib
   fib 22 >>= print
 
-  -- writeCodeGenModule "VArith.bc" mVFun
+  writeCodeGenModule "VArith.bc" mVFun
 
   ioVFun <- EE.simpleFunction mVFun
   let v = consVector 1 2 3 4
