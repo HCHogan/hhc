@@ -51,7 +51,7 @@ library
     -- other-modules:
     -- other-extensions:
     build-depends:    
-      , base ^>=4.21.0.0
+      , base
       , effectful
       , lens
       , repline
