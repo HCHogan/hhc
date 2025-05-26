@@ -13,19 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Add LLVM APT repository
+      - name: Install LLVM-16 via apt.llvm.org script
         run: |
-          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key \
-            | sudo apt-key add -
-          DISTRO=$(lsb_release -cs)
-          echo "deb http://apt.llvm.org/${DISTRO}/ llvm-toolchain-${DISTRO}-16 main" \
-            | sudo tee /etc/apt/sources.list.d/llvm.list
-
-      - name: Install LLVM 16 & Clang 16
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            llvm-16 llvm-16-dev clang-16 libclang-16-dev
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 16
 
       - name: Setup Haskell
         uses: haskell-actions/setup@v2.8.0
