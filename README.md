@@ -66,7 +66,10 @@ Future enhancements include:
 
 ## Notes
 
+The llvm-tf library uses `vecLib.Framework`, which no longer exists on modern macOS, so I made a local copy of llvm-tf and modified the cabal file to use the `Accelerate.Framework`.
+
 I wrote several notes while implementing the compiler:
+
 [implementing typeclasses](./docs/typeclass.md)
 
 ## License

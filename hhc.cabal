@@ -39,6 +39,8 @@ library
       HHC.Core.Test
       HHC.Core.Pretty
 
+      HHC.CodeGen.LLVM.Test
+
       HHC.Eval
 
       HHC.Repl
@@ -58,6 +60,9 @@ library
       , containers
       , pretty
       , mtl
+      , llvm-tf
+      , llvm-extra
+      , tfp
 
     hs-source-dirs:   src
     default-language: GHC2024
