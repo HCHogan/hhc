@@ -13,24 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install LLVM-16 via apt.llvm.org script
-        run: |
-          wget https://apt.llvm.org/llvm.sh
-          chmod +x llvm.sh
-          sudo ./llvm.sh 16
-
-      - name: Setup Haskell
-        uses: haskell-actions/setup@v2.8.0
+      - uses: cachix/install-nix-action@v31
         with:
-          ghc-version: '9.12.2'
-          cabal-version: '3.14'
-
-      - name: Update Cabal package list
-        run: cabal update
-
-      - name: Build library and executable
-        run: cabal build --enable-tests
-
-      - name: Run tests
-        run: cabal test --test-show-details=direct
-
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - run: nix build
