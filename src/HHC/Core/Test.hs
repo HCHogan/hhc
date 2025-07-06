@@ -1,7 +1,10 @@
-module HHC.Core.Test(prettyExpr1, prettyTestExpr, prettyExpectedType) where
+{-# LANGUAGE TypeFamilies #-}
 
-import HHC.Core.Syntax
+module HHC.Core.Test (prettyExpr1, prettyTestExpr, prettyExpectedType) where
+
+import Data.Proxy
 import HHC.Core.Pretty
+import HHC.Core.Syntax
 
 --   expr1 :: forall e a. e -> Maybe a -> Either e a
 --   expr1 err x = case x of
